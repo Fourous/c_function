@@ -3,3 +3,52 @@ c标准库的实现原理及其代码实现
 2:<assert.h>,<limits.h>,<stddef.h>,<time.h>
 3:<float.h>,<math.h>,<error.h>,<locate.h>,<setjmp.h>,<signal.h>,<stdarg.h>
 
+概念:库是程序中复用程序组件的集合,程序使用函数之前,得对其进行申明,一般是头文件包含在程序中.
+头文件申明某类别的所有库函数,头文件也可以定义任何类型定义和宏.
+
+函数atoi使用方式
+1:通过头文件使用
+#include <stdlib.h>
+const char *str;
+.....
+i=atoi(str);
+
+2:通过相关头文件的使用(确实生成一个真正的函数引用)
+#include <stdlib.h>
+#undef atoi
+const char *str;
+....
+i=atoi(str);
+OR
+#include <stdlib.h>
+const char *str;
+i=(atoi)(str)
+
+3:通过显示申明
+extern int atoi(const char *);
+const char *str;
+...
+i=atoi(str);
+
+4:通过隐式申明
+const char *str;
+...
+i=atoi(str);
+
+
+头文件的几个特性,幂等性,相互独立性,申明等价性
+一个大多数标准头文件可以使用宏保护
+#ifndef _STDIO_H
+#define _STDIO_H
+.....
+#endif
+
+有些名字在多个头文件中有定义,一个程序应该可以在包含另个定义相同名字的头文件不会造成错误
+#ifndef _SIZE_T
+#define _SIZE_T
+typedef unsigned int size_t;
+#endif
+
+宏null 是另外一个例子,可以在任何想引入指向数据对象的空指针(一个没有指派数据对象的指针值)的地方使用这个宏
+定义方式:
+#define NULL (void *) 0
